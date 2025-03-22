@@ -1,11 +1,11 @@
 export const styles = {
  screenshotVideoBox: {
-    position: "fixed",
-    left: "12%",
+    position: "absolute",
+    left: "3%",
     top: "50%",
     transform: "translateY(-50%)",
-    width: "938px",
-    zIndex: 1200,
+    width: "1200px",
+    zIndex: 1400,
     borderRadius: 2,
     overflow: "hidden",
     backgroundColor: "white",

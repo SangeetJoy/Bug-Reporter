@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import BugReportIcon from "@mui/icons-material/BugReport";
 import { styles } from "./FeedbackModal.styles";
+import zIndex from "@mui/material/styles/zIndex";
 
 export const FeedbackModal = ({
   open,
@@ -29,16 +30,11 @@ export const FeedbackModal = ({
   return (
     <Dialog
       open={open}
-      onClose={onModalClose}
+      // onClose={onModalClose}
       maxWidth="sm"
       fullWidth
       PaperProps={{
         sx: styles.dialog,
-      }}
-      BackdropProps={{
-        sx: {
-          backgroundColor: "transparent",
-        },
       }}
     >
       <DialogTitle sx={styles.dialogTitle}>

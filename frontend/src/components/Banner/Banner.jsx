@@ -5,7 +5,7 @@ export const Banner = ({ isOpen, onBannerClose, severity, message }) => {
   return (
     <Snackbar
       open={isOpen}
-      autoHideDuration={6000}
+      autoHideDuration={3000}
       onClose={onBannerClose}
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
     >

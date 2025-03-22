@@ -1,12 +1,12 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import html2canvas from "html2canvas";
-import { Button, CircularProgress } from "@mui/material";
-import BugReportIcon from "@mui/icons-material/BugReport";
+import Button from "@mui/material/Button";
 import { styles } from "./FeedbackWidget.styles";
 import { FeedBackSelectionModal } from "./components/FeedBackSelectionModal/FeedBackSelectionModal";
 import { Banner } from "./components/Banner/Banner";
 import { FeedbackContentArea } from "./components/FeedbackContentArea/FeedbackContentArea";
 import { FeedbackModal } from "./components/FeedbackModal/FeedbackModal";
+import RateReviewIcon from "@mui/icons-material/RateReview";
 
 const FeedbackWidget = () => {
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
@@ -21,7 +21,8 @@ const FeedbackWidget = () => {
     message: "",
     severity: "success",
   });
-  const [videoBlob, setVideoBlob] = useState(null);
+  const videoRef = useRef(null);
+  const recordedVideoBlobRef = useRef(null);
   const currentUrl = window.location.href;
 
   const startRecording = async () => {
@@ -40,7 +41,7 @@ const FeedbackWidget = () => {
 
       recorder.onstop = () => {
         const blob = new Blob(localChunks, { type: "video/webm" });
-        setVideoBlob(blob);
+        recordedVideoBlobRef.current = URL.createObjectURL(blob);
         setFeedbackModalOpen(true);
         setRecordedChunks(localChunks);
         stream.getTracks().forEach((track) => track.stop());
@@ -90,7 +91,7 @@ const FeedbackWidget = () => {
     setScreenshot(null);
     setTitle("");
     setDescription("");
-    setVideoBlob(null);
+    recordedVideoBlobRef.current = null;
   };
 
   // In handleSubmit function
@@ -136,7 +137,8 @@ const FeedbackWidget = () => {
   };
 
   const handleFeedbackClick = () => {
-    setFeedbackSelectionDialogOpen(true);
+    // setFeedbackSelectionDialogOpen(true);
+    captureScreenshot();
   };
 
   const handleFeedbackSelectionModalClose = () =>
@@ -158,9 +160,9 @@ const FeedbackWidget = () => {
         onClick={handleFeedbackClick}
         aria-label="Report a bug"
         sx={styles.feedbackButton}
-        startIcon={<BugReportIcon sx={styles.buttonIcon} />}
+        startIcon={<RateReviewIcon sx={styles.buttonIcon} />}
       >
-        {"Report a bug"}
+        {"Report Feedback"}
       </Button>
       <FeedBackSelectionModal
         feedbackSelectionDialogOpen={feedbackSelectionDialogOpen}
@@ -189,11 +191,14 @@ const FeedbackWidget = () => {
         severity={feedbackToast.severity}
         message={feedbackToast.message}
       />
-      <FeedbackContentArea
-        screenshot={screenshot}
-        video={videoBlob}
-        handleClose={handleFeedbackClose}
-      />
+      {screenshot && (
+        <FeedbackContentArea
+          screenshot={screenshot}
+          videoSrc={recordedVideoBlobRef.current}
+          handleClose={handleFeedbackClose}
+          videoRef={videoRef}
+        />
+      )}
     </>
   );
 };
