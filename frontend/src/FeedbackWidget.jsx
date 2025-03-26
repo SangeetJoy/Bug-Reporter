@@ -77,7 +77,8 @@ const FeedbackWidget = () => {
       if (feedbackBtn) feedbackBtn.style.display = "flex";
 
       canvas.toBlob((blob) => {
-        setScreenshot(blob);
+        const url = URL.createObjectURL(blob);
+        setScreenshot(url);
       });
       setFeedbackModalOpen(true);
     } catch (error) {

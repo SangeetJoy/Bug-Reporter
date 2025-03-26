@@ -7,7 +7,10 @@
       m: 0,
       width: { xs: 'calc(100% - 40px)', sm: '400px' },
       maxHeight: 'calc(100vh - 100px)',
-      overflow: 'auto'
+      overflow: 'auto',
+      borderRadius: '25px',
+      padding: "5px",
+      background: "white"
     },
     dialogTitle: {
       textAlign: "center",
@@ -120,7 +123,7 @@
       }
     },
     textField: {
-      mb: 2,
+      mb: 2.5,
       '& .MuiInputLabel-root': { 
         fontSize: '0.875rem',
         fontWeight: 500,
@@ -165,7 +168,7 @@
         boxShadow: '0 0 40px rgba(0,0,0,0.03)',
         zIndex: -1
       },
-      mb: 2,
+      mb: 3,
       p: 1.5,
       bgcolor: 'grey.50',
       borderRadius: 1,

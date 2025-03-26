@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import BugReportIcon from "@mui/icons-material/BugReport";
 import { styles } from "./FeedbackModal.styles";
-import zIndex from "@mui/material/styles/zIndex";
+import { motion } from "framer-motion";
 
 export const FeedbackModal = ({
   open,
@@ -35,7 +35,16 @@ export const FeedbackModal = ({
       fullWidth
       PaperProps={{
         sx: styles.dialog,
+        initial: { opacity: 0, scale: 0.9, y: 50 }, // Start smaller and lower
+        animate: { opacity: 1, scale: 1, y: 0 }, // Expand and rise smoothly
+        exit: { opacity: 0, scale: 0.9, y: 50 }, // Animate out smoothly
+        transition: {
+          type: "spring",
+          stiffness: 200,
+          damping: 20,
+        },
       }}
+      PaperComponent={motion.div}
     >
       <DialogTitle sx={styles.dialogTitle}>
         <Box component="span" sx={styles.titleBox}>
@@ -70,6 +79,17 @@ export const FeedbackModal = ({
           size="small"
           sx={styles.textField}
           label="Title"
+        />
+        <TextField
+          autoFocus
+          fullWidth
+          placeholder="Who do you want to email?"
+          value=""
+          onChange={() => {}}
+          size="small"
+          sx={styles.textField}
+          label="Receiver Email"
+          required
         />
         <TextField
           fullWidth
