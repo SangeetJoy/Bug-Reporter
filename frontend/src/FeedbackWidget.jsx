@@ -12,6 +12,7 @@ const FeedbackWidget = () => {
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [receiverEmail, setReceiverEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [screenshot, setScreenshot] = useState(null);
   const [feedbackSelectionDialogOpen, setFeedbackSelectionDialogOpen] =
@@ -97,18 +98,23 @@ const FeedbackWidget = () => {
 
   // In handleSubmit function
   const handleSubmit = async () => {
-    if (!title.trim() || !description.trim()) return;
+    if (!title.trim() || !description.trim() || !receiverEmail.trim()) return;
+
     setLoading(true);
 
     try {
       const formData = new FormData();
       formData.append("title", title.trim());
       formData.append("description", description.trim());
+      formData.append("receiverEmail", receiverEmail.trim());
       formData.append("url", currentUrl);
       formData.append("timestamp", new Date().toISOString());
-      if (screenshot) {
-        formData.append("screenshot", screenshot, "screenshot.png");
-      }
+      console.log("hit *****");
+
+      const result = await fetch(screenshot);
+      const screenshotBlob = await result.blob();
+
+      formData.append("screenshot", screenshotBlob, "screenshot.png");
 
       const response = await fetch("http://localhost:3001/api/feedback", {
         method: "POST",
@@ -153,6 +159,10 @@ const FeedbackWidget = () => {
     setDescription(e.target.value);
   };
 
+  const handleReceiverEmailChange = (e) => {
+    setReceiverEmail(e.target.value);
+  };
+
   return (
     <>
       <Button
@@ -183,6 +193,8 @@ const FeedbackWidget = () => {
         loading={loading}
         title={title}
         description={description}
+        receiverEmail={receiverEmail}
+        handleReceiverEmailChange={handleReceiverEmailChange}
       />
       <Banner
         isOpen={feedbackToast.open}

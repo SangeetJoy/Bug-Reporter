@@ -26,6 +26,8 @@ export const FeedbackModal = ({
   loading,
   title,
   description,
+  receiverEmail,
+  handleReceiverEmailChange,
 }) => {
   return (
     <Dialog
@@ -84,8 +86,8 @@ export const FeedbackModal = ({
           autoFocus
           fullWidth
           placeholder="Who do you want to email?"
-          value=""
-          onChange={() => {}}
+          value={receiverEmail}
+          onChange={handleReceiverEmailChange}
           size="small"
           sx={styles.textField}
           label="Receiver Email"
