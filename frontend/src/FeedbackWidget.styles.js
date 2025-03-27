@@ -24,7 +24,7 @@ export const styles = {
     textTransform: 'none',
     boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
     transition: 'all 0.15s ease-in-out',
-    zIndex: 1050,
+    zIndex: 10000,
     userSelect: 'none'
   },
   buttonIcon: {

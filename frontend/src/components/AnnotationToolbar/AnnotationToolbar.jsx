@@ -11,7 +11,7 @@ import CropSquareIcon from "@mui/icons-material/CropSquare";
 import NearMeIcon from "@mui/icons-material/NearMe";
 import EastIcon from "@mui/icons-material/East";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { ACTIONS } from "../FeedbackContentArea/FeedbackContentArea";
+import { ACTIONS } from "../../constants";
 
 const AnnotationToolbar = ({
   handleDrawingButtonsClick,

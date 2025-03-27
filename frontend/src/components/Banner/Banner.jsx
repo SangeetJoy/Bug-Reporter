@@ -1,5 +1,9 @@
 import React from "react";
-import { Snackbar, Alert } from "@mui/material";
+import { Snackbar, Alert, Slide } from "@mui/material";
+
+function SlideTransition(props) {
+  return <Slide {...props} direction="left" />;
+}
 
 export const Banner = ({ isOpen, onBannerClose, severity, message }) => {
   return (
@@ -8,8 +12,14 @@ export const Banner = ({ isOpen, onBannerClose, severity, message }) => {
       autoHideDuration={3000}
       onClose={onBannerClose}
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      TransitionComponent={SlideTransition}
     >
-      <Alert onClose={onBannerClose} severity={severity} sx={{ width: "100%" }}>
+      <Alert
+        onClose={onBannerClose}
+        severity={severity}
+        sx={{ width: "100%" }}
+        variant="filled"
+      >
         {message}
       </Alert>
     </Snackbar>

@@ -24,6 +24,7 @@ const FeedbackWidget = () => {
   });
   const videoRef = useRef(null);
   const recordedVideoBlobRef = useRef(null);
+  const drawingStageRef = useRef(null);
   const currentUrl = window.location.href;
 
   const startRecording = async () => {
@@ -98,7 +99,13 @@ const FeedbackWidget = () => {
 
   // In handleSubmit function
   const handleSubmit = async () => {
-    if (!title.trim() || !description.trim() || !receiverEmail.trim()) return;
+    if (
+      !title.trim() ||
+      !description.trim() ||
+      !receiverEmail.trim() ||
+      !drawingStageRef.current
+    )
+      return;
 
     setLoading(true);
 
@@ -111,7 +118,12 @@ const FeedbackWidget = () => {
       formData.append("timestamp", new Date().toISOString());
       console.log("hit *****");
 
-      const result = await fetch(screenshot);
+      const dataURL = drawingStageRef.current.toDataURL({
+        mimeType: "image/png", // PNG avoids compression issues
+        quality: 1, // Maximum quality (useful for JPEG)
+        pixelRatio: 2, // Increase resolution (default is 1)
+      });
+      const result = await fetch(dataURL);
       const screenshotBlob = await result.blob();
 
       formData.append("screenshot", screenshotBlob, "screenshot.png");
@@ -210,6 +222,7 @@ const FeedbackWidget = () => {
           videoSrc={recordedVideoBlobRef.current}
           handleClose={handleFeedbackClose}
           videoRef={videoRef}
+          drawingStageRef={drawingStageRef}
         />
       )}
     </>
