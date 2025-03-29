@@ -219,9 +219,8 @@ const FeedbackWidget = () => {
       {screenshot && (
         <FeedbackContentArea
           screenshot={screenshot}
-          videoSrc={recordedVideoBlobRef.current}
-          handleClose={handleFeedbackClose}
-          videoRef={videoRef}
+          // videoSrc={recordedVideoBlobRef.current}
+          // videoRef={videoRef}
           drawingStageRef={drawingStageRef}
         />
       )}

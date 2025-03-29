@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React from "react";
 import html2canvas from "html2canvas";
 import {
   Button,
@@ -37,9 +37,9 @@ export const FeedbackModal = ({
       fullWidth
       PaperProps={{
         sx: styles.dialog,
-        initial: { opacity: 0, scale: 0.9, y: 50 }, // Start smaller and lower
-        animate: { opacity: 1, scale: 1, y: 0 }, // Expand and rise smoothly
-        exit: { opacity: 0, scale: 0.9, y: 50 }, // Animate out smoothly
+        initial: { opacity: 0, scale: 0.9, y: 50 },
+        animate: { opacity: 1, scale: 1, y: 0 },
+        exit: { opacity: 0, scale: 0.9, y: 50 },
         transition: {
           type: "spring",
           stiffness: 200,
@@ -75,7 +75,7 @@ export const FeedbackModal = ({
         <TextField
           autoFocus
           fullWidth
-          placeholder="What's on your mind?"
+          placeholder="Please give a title for the feedback"
           value={title}
           onChange={handleTitleChange}
           size="small"

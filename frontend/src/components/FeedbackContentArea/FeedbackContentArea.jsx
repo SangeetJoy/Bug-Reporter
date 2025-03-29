@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, act } from "react";
+import React, { useState, useEffect, useRef, memo } from "react";
 import { Box, Backdrop } from "@mui/material";
 import { styles } from "./FeedbackContentArea.styles";
 import {
@@ -16,14 +16,7 @@ import { motion } from "framer-motion";
 import KonvaImage from "../KonvaImage/KonvaImage";
 import { ACTIONS } from "../../constants";
 
-export const FeedbackContentArea = ({
-  screenshot,
-  videoSrc,
-  videoRef,
-  drawingStageRef,
-}) => {
-  // const imageSrc = screenshot ? URL.createObjectURL(screenshot) : null;
-  // const drawingStageRef = useRef(null);
+export const FeedbackContentArea = memo(({ screenshot, drawingStageRef }) => {
   const [action, setAction] = useState(ACTIONS.ARROW);
   const [fillColor, setFillColor] = useState("black");
   const [rectangles, setRectangles] = useState([]);
@@ -34,15 +27,68 @@ export const FeedbackContentArea = ({
   const isDraggable = action === ACTIONS.SELECT;
   const transformerRef = useRef(null);
   const [texts, setTexts] = useState([]);
-  const [selectedText, setSelectedText] = useState(null);
-  const [inputValue, setInputValue] = useState("");
-  const [inputPosition, setInputPosition] = useState({ x: 0, y: 0 });
+  const [textPopoverAnchorEl, setTextPopoverAnchorEl] = useState(null);
+  const [textValue, setTextValue] = useState("");
+  const [selectedShapeId, setSelectedShapeId] = useState(null);
+
+  const handleTextClick = (event) => {
+    setTextPopoverAnchorEl(event.currentTarget);
+  };
+
+  const handleTextPopoverClose = () => {
+    setTextPopoverAnchorEl(null);
+  };
+
+  const handleDeleteShape = () => {
+    setRectangles((shapes) =>
+      shapes.filter((shape) => shape.id !== selectedShapeId)
+    );
+    setArrows((shapes) =>
+      shapes.filter((shape) => shape.id !== selectedShapeId)
+    );
+    setScribbles((shapes) =>
+      shapes.filter((shape) => shape.id !== selectedShapeId)
+    );
+    setTexts((shapes) =>
+      shapes.filter((shape) => shape.id !== selectedShapeId)
+    );
+    setSelectedShapeId(null);
+    transformerRef.current.nodes([]);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.key === "Delete" || e.key === "Backspace") && selectedShapeId) {
+        handleDeleteShape();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedShapeId]);
+
+  const handlePopoverAddText = () => {
+    const id = uuidv4();
+    const offset = texts.length * 5;
+    const newX = 150 + offset;
+    const newY = 150 + offset;
+
+    setTexts((prevTexts) => [
+      ...prevTexts,
+      { id, text: textValue, fontSize: 22, fill: fillColor, x: newX, y: newY },
+    ]);
+    setTextValue("");
+    setAction(null);
+    handleTextPopoverClose();
+  };
 
   const handleClear = () => {
     setRectangles([]);
     setArrows([]);
     setScribbles([]);
     setTexts([]);
+    transformerRef.current.nodes([]);
   };
 
   const handleDrawingButtonsClick = (actionType) => {
@@ -135,53 +181,22 @@ export const FeedbackContentArea = ({
         break;
     }
   };
-  const onShapesClick = (e) => {
+  const onShapesClick = (e, shapeId) => {
+    setSelectedShapeId(shapeId);
     if (action !== ACTIONS.SELECT) return;
+    console.log("shapes click", { shapeId });
     const target = e.currentTarget;
     transformerRef.current.nodes([target]);
   };
-  const handleInputChange = (e) => {
-    console.log("change", { value: e.target.value });
 
-    setInputValue(e.target.value);
-  };
-  const handleInputBlur = () => {
-    if (!selectedText) return;
-
-    setTexts((prevTexts) =>
-      prevTexts.map((t) =>
-        t.id === selectedText.id ? { ...t, text: inputValue } : t
-      )
-    );
-    setSelectedText(null);
-  };
-  const handleTextDoubleClick = (e, textObj) => {
-    setSelectedText(textObj);
-    setInputValue(textObj.text);
-
-    // Get absolute position of the text element
-    const textPos = textNode.getAbsolutePosition();
-
-    // Get absolute position of the text in the Konva stage
-    const textNode = e.target;
-    const stage = drawingStageRef.current;
-    const stageBox = stage.container().getBoundingClientRect(); // Get stage position in the viewport
-
-    // Adjust input position relative to the page
-    setInputPosition({
-      x: stageBox.left + textPos.x,
-      y: stageBox.top + textPos.y,
-    });
-  };
-
-  console.log({ selectedText });
+  const onImageClick = () => transformerRef.current.nodes([]);
 
   return (
     <>
       <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 50 }} // Start smaller and lower
-        animate={{ opacity: 1, scale: 1, y: 0 }} // Expand and rise smoothly
-        exit={{ opacity: 0, scale: 0.9, y: 50 }} // Animate out smoothly
+        initial={{ opacity: 0, scale: 0.9, y: 50 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.9, y: 50 }}
         transition={{
           type: "spring",
           stiffness: 170,
@@ -191,28 +206,6 @@ export const FeedbackContentArea = ({
         className={screenshot ? "screenshot-box" : "video-box"}
       >
         {/* {videoSrc && <video controls autoPlay src={videoSrc} ref={videoRef} />} */}
-        {selectedText && (
-          <input
-            type="text"
-            value={inputValue}
-            onChange={handleInputChange}
-            onBlur={handleInputBlur}
-            onKeyDown={(e) => e.key === "Enter" && handleInputBlur()}
-            autoFocus
-            style={{
-              position: "absolute",
-              top: inputPosition.y,
-              left: inputPosition.x,
-              fontSize: "24px",
-              border: "2px solid red",
-              zIndex: "5000",
-              // outline: "none",
-              // background: "transparent",
-              color: "black",
-            }}
-            id="drawing-text"
-          />
-        )}
         <Stage
           width={1200}
           height={700}
@@ -223,10 +216,14 @@ export const FeedbackContentArea = ({
           style={{
             cursor: action === ACTIONS.SELECT && "grab",
           }}
-          // onClick={() => setAction(null)}
         >
           <Layer>
-            <KonvaImage src={screenshot} stageWidth={1200} stageHeight={650} />
+            <KonvaImage
+              src={screenshot}
+              stageWidth={1200}
+              stageHeight={650}
+              onImageClick={onImageClick}
+            />
             {rectangles.map((rectangle) => (
               <Rect
                 key={rectangle.id}
@@ -237,7 +234,8 @@ export const FeedbackContentArea = ({
                 stroke={rectangle.strokeColor}
                 strokeWidth={2.5}
                 draggable={isDraggable}
-                onClick={onShapesClick}
+                onClick={(e) => onShapesClick(e, rectangle.id)}
+                perfectDrawEnabled={false}
               />
             ))}
             {arrows.map((arrow) => (
@@ -252,7 +250,7 @@ export const FeedbackContentArea = ({
                 stroke={arrow.color}
                 strokeWidth={2.5}
                 draggable={isDraggable}
-                onClick={onShapesClick}
+                onClick={(e) => onShapesClick(e, arrow.id)}
               />
             ))}
             {scribbles.map((scribble) => (
@@ -265,7 +263,7 @@ export const FeedbackContentArea = ({
                 lineCap="round"
                 lineJoin="round"
                 draggable={isDraggable}
-                onClick={onShapesClick}
+                onClick={(e) => onShapesClick(e, scribble.id)}
               />
             ))}
             {texts.map((txt) => (
@@ -274,18 +272,11 @@ export const FeedbackContentArea = ({
                 {...txt}
                 draggable
                 onDblClick={(e) => handleTextDoubleClick(e, txt)}
+                color={fillColor}
+                onClick={(e) => onShapesClick(e, txt.id)}
               />
             ))}
-            {/* <Text
-              x={100}
-              y={50}
-              text="Hello, Konva!"
-              fontSize={18}
-              fill="red"
-              fontFamily="Arial"
-              draggable={isDraggable}
-            /> */}
-            {/* <Transformer ref={transformerRef} /> */}
+            <Transformer ref={transformerRef} />
           </Layer>
         </Stage>
       </motion.div>
@@ -311,8 +302,14 @@ export const FeedbackContentArea = ({
           handleClear={handleClear}
           fillColor={fillColor}
           setFillColor={setFillColor}
+          textPopoverAnchorEl={textPopoverAnchorEl}
+          handleTextPopoverClose={handleTextPopoverClose}
+          handleTextClick={handleTextClick}
+          handlePopoverAddText={handlePopoverAddText}
+          textValue={textValue}
+          setTextValue={setTextValue}
         />
       </motion.div>
     </>
   );
-};
+});

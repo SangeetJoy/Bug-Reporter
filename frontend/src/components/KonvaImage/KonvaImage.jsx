@@ -2,20 +2,20 @@ import React from "react";
 import { Image } from "react-konva";
 import useImage from "use-image";
 
-const KonvaImage = ({ src, stageWidth, stageHeight }) => {
+const KonvaImage = ({ src, stageWidth, stageHeight, onImageClick }) => {
   const [image, status] = useImage(src, "anonymous");
 
   if (status === "loading") {
-    console.log("Image is still loading...");
+    // console.log("Image is still loading...");
     return null; // Prevent rendering while loading
   }
 
   if (status === "failed") {
-    console.error("Failed to load image:", src);
+    // console.error("Failed to load image:", src);
     return null;
   }
 
-  console.log("Image loaded successfully", image);
+  // console.log("Image loaded successfully", image);
 
   // Scale to fit inside the stage
   const scaleX = stageWidth / image.width;
@@ -33,6 +33,7 @@ const KonvaImage = ({ src, stageWidth, stageHeight }) => {
       y={25}
       x={35}
       scale={{ x: scale, y: scale }}
+      onClick={onImageClick}
     />
   );
 };

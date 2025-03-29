@@ -9,7 +9,7 @@ export const Banner = ({ isOpen, onBannerClose, severity, message }) => {
   return (
     <Snackbar
       open={isOpen}
-      autoHideDuration={3000}
+      autoHideDuration={2000}
       onClose={onBannerClose}
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
       TransitionComponent={SlideTransition}
