@@ -16,7 +16,7 @@ import { motion } from "framer-motion";
 import KonvaImage from "../KonvaImage/KonvaImage";
 import { ACTIONS } from "../../constants";
 
-export const FeedbackContentArea = memo(({ screenshot, drawingStageRef }) => {
+const FeedbackContentArea = memo(({ screenshot, drawingStageRef }) => {
   const [action, setAction] = useState(ACTIONS.ARROW);
   const [fillColor, setFillColor] = useState("black");
   const [rectangles, setRectangles] = useState([]);
@@ -313,3 +313,5 @@ export const FeedbackContentArea = memo(({ screenshot, drawingStageRef }) => {
     </>
   );
 });
+
+export default FeedbackContentArea;

@@ -10,7 +10,7 @@ import {
 import CameraIcon from "@mui/icons-material/Camera";
 import VideocamIcon from "@mui/icons-material/Videocam";
 
-export const FeedBackSelectionModal = ({
+const FeedBackSelectionModal = ({
   feedbackSelectionDialogOpen,
   handleFeedbackSelectionModalClose,
   setFeedbackSelectionDialogOpen,
@@ -59,3 +59,5 @@ export const FeedBackSelectionModal = ({
     </Dialog>
   );
 };
+
+export default FeedBackSelectionModal;

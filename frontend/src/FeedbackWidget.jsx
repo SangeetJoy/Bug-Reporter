@@ -1,12 +1,18 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, lazy, Suspense } from "react";
 import html2canvas from "html2canvas";
 import Button from "@mui/material/Button";
 import { styles } from "./FeedbackWidget.styles";
-import { FeedBackSelectionModal } from "./components/FeedBackSelectionModal/FeedBackSelectionModal";
 import { Banner } from "./components/Banner/Banner";
-import { FeedbackContentArea } from "./components/FeedbackContentArea/FeedbackContentArea";
-import { FeedbackModal } from "./components/FeedbackModal/FeedbackModal";
 import RateReviewIcon from "@mui/icons-material/RateReview";
+const FeedbackModal = lazy(() =>
+  import("./components/FeedbackModal/FeedbackModal")
+);
+const FeedbackContentArea = lazy(() =>
+  import("./components/FeedbackContentArea/FeedbackContentArea")
+);
+const FeedBackSelectionModal = lazy(() =>
+  import("./components/FeedBackSelectionModal/FeedBackSelectionModal")
+);
 
 const FeedbackWidget = () => {
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
@@ -187,43 +193,51 @@ const FeedbackWidget = () => {
       >
         {"Report Feedback"}
       </Button>
-      <FeedBackSelectionModal
-        feedbackSelectionDialogOpen={feedbackSelectionDialogOpen}
-        handleFeedbackSelectionModalClose={handleFeedbackSelectionModalClose}
-        setFeedbackSelectionDialogOpen={setFeedbackSelectionDialogOpen}
-        captureScreenshot={captureScreenshot}
-        startRecording={startRecording}
-      />
-      <FeedbackModal
-        open={feedbackModalOpen}
-        onModalClose={handleFeedbackClose}
-        projectUrl={currentUrl}
-        handleTitleChange={handleTitleChange}
-        handleDescriptionChange={handleDescriptionChange}
-        onCancelButtonClick={handleFeedbackClose}
-        onSendFeedbackButtonClick={handleSubmit}
-        loading={loading}
-        title={title}
-        description={description}
-        receiverEmail={receiverEmail}
-        handleReceiverEmailChange={handleReceiverEmailChange}
-      />
-      <Banner
-        isOpen={feedbackToast.open}
-        onBannerClose={() =>
-          setFeedbackToast((prev) => ({ ...prev, open: false }))
-        }
-        severity={feedbackToast.severity}
-        message={feedbackToast.message}
-      />
-      {screenshot && (
-        <FeedbackContentArea
-          screenshot={screenshot}
-          // videoSrc={recordedVideoBlobRef.current}
-          // videoRef={videoRef}
-          drawingStageRef={drawingStageRef}
+      <Suspense fallback={<h1>Loading...</h1>}>
+        {screenshot && (
+          <FeedBackSelectionModal
+            feedbackSelectionDialogOpen={feedbackSelectionDialogOpen}
+            handleFeedbackSelectionModalClose={
+              handleFeedbackSelectionModalClose
+            }
+            setFeedbackSelectionDialogOpen={setFeedbackSelectionDialogOpen}
+            captureScreenshot={captureScreenshot}
+            startRecording={startRecording}
+          />
+        )}
+        {screenshot && (
+          <FeedbackModal
+            open={feedbackModalOpen}
+            onModalClose={handleFeedbackClose}
+            projectUrl={currentUrl}
+            handleTitleChange={handleTitleChange}
+            handleDescriptionChange={handleDescriptionChange}
+            onCancelButtonClick={handleFeedbackClose}
+            onSendFeedbackButtonClick={handleSubmit}
+            loading={loading}
+            title={title}
+            description={description}
+            receiverEmail={receiverEmail}
+            handleReceiverEmailChange={handleReceiverEmailChange}
+          />
+        )}
+        <Banner
+          isOpen={feedbackToast.open}
+          onBannerClose={() =>
+            setFeedbackToast((prev) => ({ ...prev, open: false }))
+          }
+          severity={feedbackToast.severity}
+          message={feedbackToast.message}
         />
-      )}
+        {screenshot && (
+          <FeedbackContentArea
+            screenshot={screenshot}
+            // videoSrc={recordedVideoBlobRef.current}
+            // videoRef={videoRef}
+            drawingStageRef={drawingStageRef}
+          />
+        )}
+      </Suspense>
     </>
   );
 };

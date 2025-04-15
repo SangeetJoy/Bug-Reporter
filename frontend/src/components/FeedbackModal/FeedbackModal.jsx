@@ -15,7 +15,7 @@ import BugReportIcon from "@mui/icons-material/BugReport";
 import { styles } from "./FeedbackModal.styles";
 import { motion } from "framer-motion";
 
-export const FeedbackModal = ({
+const FeedbackModal = ({
   open,
   onModalClose,
   projectUrl,
@@ -127,3 +127,5 @@ export const FeedbackModal = ({
     </Dialog>
   );
 };
+
+export default FeedbackModal;

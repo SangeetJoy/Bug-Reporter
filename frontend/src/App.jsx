@@ -1,7 +1,6 @@
 import React from "react";
 import { Box, Container } from "@mui/material";
 import FeedbackWidget from "./FeedbackWidget";
-import { FeedbackWidgetOld } from "./originalWidget";
 
 function App() {
   return (
@@ -91,7 +90,6 @@ function App() {
         </Box>
       </Container>
       <FeedbackWidget />
-      {/* <FeedbackWidgetOld /> */}
     </Box>
   );
 }
